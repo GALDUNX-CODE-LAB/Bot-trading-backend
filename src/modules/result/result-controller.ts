@@ -6,12 +6,13 @@ export class ResultController {
   static async getUserTradeStats(req: Request, res: Response) {
     try {
       const userId = req.session.userId;
-      const { chain, fromDate, toDate } = req.query;
+      const { chain, fromDate, toDate, pnl } = req.query;
 
       const data = await ResultService.getUserTradeStats(userId, {
         chain: chain as string,
         fromDate: fromDate as string,
         toDate: toDate as string,
+        pnl: pnl as 'Profit' | 'Loss',
       });
 
       return devResponse(res, data);

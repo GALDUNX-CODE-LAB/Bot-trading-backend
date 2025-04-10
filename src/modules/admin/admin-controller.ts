@@ -18,10 +18,10 @@ export class AdminTransactionController {
       const user = await UserModel.findById(deposit.userId);
       if (!user) return notFoundResponse(res, "User not found");
       if (oldStatus === "Pending" && status === "Confirmed") {
-        user.operatingBalance += deposit.amount;
+        user.fundingBalance += deposit.amount;
       }
       if (oldStatus === "Confirmed" && status === "Declined") {
-        user.operatingBalance -= deposit.amount;
+        user.fundingBalance -= deposit.amount;
       }
       await user.save();
       return response(res, 200, deposit);

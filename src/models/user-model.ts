@@ -8,11 +8,13 @@ export interface IUser extends Document {
   telegramId: number;
   coinBalance: number;
   availableBalance: number;
-  operatingBalance: number;
+  tradingBalance: number;
+  fundingBalance: number;
   deposits: Types.ObjectId[];  
   withdrawals: Types.ObjectId[];
   completedTask: Types.ObjectId[];
   lastMiningClaim?: Date;
+  invites: Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -36,8 +38,12 @@ const UserSchema = new Schema<IUser>(
     availableBalance: {
       type: Number,
       default: 0,
+    },    
+    fundingBalance: {
+      type: Number,
+      default: 0,
     },
-    operatingBalance: {
+    tradingBalance: {
       type: Number,
       default: 0,
     },
@@ -52,7 +58,8 @@ const UserSchema = new Schema<IUser>(
     lastMiningClaim: {
         type: Date,
         default: null,
-    }
+    },
+    invites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Invite" }],
   },
   {
     timestamps: true,
