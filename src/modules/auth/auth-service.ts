@@ -1,7 +1,7 @@
 import UserModel, { IUser } from "../../models/user-model";
 import crypto from "crypto";
 import { notFoundResponse } from "../../utils/response-util";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import TaskModel from "../../models/task-model";
 
 interface TelegramUserData {
@@ -103,6 +103,26 @@ export class TelegramAuthService {
       updatedBalance: user.coinBalance,
     };
   }
+
+    static async inviteUser(inviterId: string, telegramId: number, userName: string) {
+    let user = await UserModel.findOne({ telegramId });
+
+    if (user) {
+      return { user, message: "User already exists, signed in" };
+    }
+
+    user = await UserModel.create({
+      userName,
+      telegramId,
+    });
+
+    // Add invited user to inviter's invites
+    await UserModel.findByIdAndUpdate(inviterId, {
+      $push: { invites: user._id }
+    });
+
+    return { user, message: "User invited " };
+  }
 }
-}
+
 
