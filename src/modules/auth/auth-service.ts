@@ -1,9 +1,10 @@
 import UserModel, { IUser } from "../../models/user-model";
 import crypto from "crypto";
-import { notFoundResponse } from "../../utils/response-util";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import TaskModel from "../../models/task-model";
 
+
+type BalanceKey = 'availableBalance' | 'tradingBalance' | 'fundingBalance';
 interface TelegramUserData {
   id: number;
   username?: string;
@@ -103,6 +104,67 @@ export class TelegramAuthService {
       updatedBalance: user.coinBalance,
     };
   }
+
+    static async inviteUser(inviterId: string, telegramId: number, userName: string) {
+    let user = await UserModel.findOne({ telegramId });
+
+    if (user) {
+      return { user, message: "User already exists, signed in" };
+    }
+
+    user = await UserModel.create({
+      userName,
+      telegramId,
+    });
+
+    // Add invited user to inviter's invites
+    await UserModel.findByIdAndUpdate(inviterId, {
+      $push: { invites: user._id }
+    });
+
+    return { user, message: "User invited " };
+  }
+
+    static async transferFunds(
+    userId: string,
+    from: BalanceKey,
+    to: BalanceKey,
+    amount: number
+  ) {
+    if (!['availableBalance', 'tradingBalance', 'fundingBalance'].includes(from) || 
+        !['availableBalance', 'tradingBalance', 'fundingBalance'].includes(to)) {
+      throw new Error("Invalid account type");
+    }
+
+    if (from === to) {
+      throw new Error("Source and destination must be different");
+    }
+
+    if (amount <= 0) {
+      throw new Error("Amount must be greater than 0");
+    }
+
+    const user = await UserModel.findById(userId);
+    if (!user) throw new Error("User not found");
+
+    if ((user[from] as number) < amount) {
+      throw new Error(`Insufficient balance in ${from}`);
+    }
+
+    user[from] -= amount;
+    user[to] += amount;
+
+    await user.save();
+
+    return {
+      message: `Transferred ${amount} from ${from} to ${to}`,
+      balances: {
+        availableBalance: user.availableBalance,
+        fundingBalance: user.fundingBalance,
+        tradingBalance: user.tradingBalance
+      }
+    };
+  }
 }
-}
+
 

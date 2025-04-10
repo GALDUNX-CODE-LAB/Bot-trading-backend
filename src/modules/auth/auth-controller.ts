@@ -6,6 +6,8 @@ import UserModel from "../../models/user-model";
 import DepositModel from "../../models/deposit-model";
 import WithdrawalModel from "../../models/withdrawal-model";
 import TaskModel from "../../models/task-model";
+import { Types } from "mongoose";
+import { inviteUser } from "./auth-validation";
 
 void DepositModel;
 void WithdrawalModel;
@@ -32,7 +34,9 @@ export class AuthController {
         userName: user.userName,
         coinBalance: user.coinBalance,
         availableBalance: user.availableBalance,
-        operatingBalance: user.operatingBalance,
+        tradingBalance: user.tradingBalance,
+        fundingBalance: user.fundingBalance,
+
       };
       return devResponse(res, { accessToken, refreshToken, userData });
     } catch (error) {
@@ -80,7 +84,7 @@ export class AuthController {
         totalWithdrawals: user.withdrawals.length,
         coinBalance: user.coinBalance,
         availableBalance: user.availableBalance,
-        operatingBalance: user.operatingBalance,
+        tradingBalance: user.tradingBalance,
       };
 
       return devResponse(res, stats);
@@ -133,4 +137,34 @@ export class AuthController {
     return errorResponse(res, error.message);
   }
 }
+
+static async  inviteUser(req: Request, res: Response) {
+  try {
+    const inviterId = req.session?.userId as string;
+    const { telegramId, userName } = req.body;
+
+    if ( !telegramId || !userName) {
+      return errorResponse(res, "Missing required fields")
+    }
+
+    const invite = await TelegramAuthService.inviteUser(inviterId, telegramId, userName);
+    return devResponse(res, invite);
+  } catch (error: any) {
+    console.error(error);
+    return errorResponse(res, error.message);
+  }
+}
+
+  static async transferFunds(req: Request, res: Response) {
+    try {
+      const userId = req.session?.userId;
+      const { from, to, amount } = req.body;
+
+      const result = await TelegramAuthService.transferFunds(userId, from, to, amount);
+      return devResponse(res, result);
+    } catch (error: any) {
+      console.error("Transfer error:", error);
+      return errorResponse(res, error.message || "Transfer failed");
+    }
+  }
 }
