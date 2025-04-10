@@ -6,6 +6,8 @@ import UserModel from "../../models/user-model";
 import DepositModel from "../../models/deposit-model";
 import WithdrawalModel from "../../models/withdrawal-model";
 import TaskModel from "../../models/task-model";
+import { Types } from "mongoose";
+import { inviteUser } from "./auth-validation";
 
 void DepositModel;
 void WithdrawalModel;
@@ -130,6 +132,23 @@ export class AuthController {
     const result = await TelegramAuthService.claimMiningPoints(userId, points);
     return devResponse(res, result);
   } catch (error: any) {
+    return errorResponse(res, error.message);
+  }
+}
+
+static async  inviteUser(req: Request, res: Response) {
+  try {
+    const inviterId = req.session?.userId as string;
+    const { telegramId, userName } = req.body;
+
+    if ( !telegramId || !userName) {
+      return errorResponse(res, "Missing required fields")
+    }
+
+    const invite = await TelegramAuthService.inviteUser(inviterId, telegramId, userName);
+    return devResponse(res, invite);
+  } catch (error: any) {
+    console.error(error);
     return errorResponse(res, error.message);
   }
 }

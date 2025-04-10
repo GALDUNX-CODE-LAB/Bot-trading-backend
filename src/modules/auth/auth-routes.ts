@@ -10,6 +10,7 @@ authRoute.get("/check-user/:telegramId", AuthController.checkUserExists);
 
 authRoute.use(authHandler);
 authRoute.post("/users/claim-mining", AuthController.claimMiningPoints);
+authRoute.post("/invite", AuthController.inviteUser)
 authRoute.get("/user", AuthController.getUserById);
 authRoute.get("/users/stats", AuthController.getUserStats);
 authRoute.get("/completed", AuthController.getCompletedTasks);

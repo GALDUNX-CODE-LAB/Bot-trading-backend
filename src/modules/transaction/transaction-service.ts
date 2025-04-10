@@ -4,39 +4,39 @@ import UserModel from "../../models/user-model";
 import { Types } from "mongoose";
 
 export class TransactionService {
-static async createDeposit(data: {
-  userId: string;
-  hash: string;
-  chain: string;
-  amount: number;
-}) {
-  const { userId, hash, chain, amount } = data;
+// static async createDeposit(data: {
+//   userId: string;
+//   hash: string;
+//   chain: string;
+//   amount: number;
+// }) {
+//   const { userId, hash, chain, amount } = data;
 
-  // 1. Validation - amount should be positive
-  if (amount <= 0) {
-    throw new Error("Amount must be greater than 0");
-  }
+//   // 1. Validation - amount should be positive
+//   if (amount <= 0) {
+//     throw new Error("Amount must be greater than 0");
+//   }
 
-  // 2. Check for duplicate hash
-  const existingDeposit = await DepositModel.findOne({ hash });
-  if (existingDeposit) {
-    throw new Error("Deposit hash already exists");
-  }
+//   // 2. Check for duplicate hash
+//   const existingDeposit = await DepositModel.findOne({ hash });
+//   if (existingDeposit) {
+//     throw new Error("Deposit hash already exists");
+//   }
 
-  // 3. Create the deposit
-  const deposit = await DepositModel.create({
-    userId,
-    hash,
-    chain,
-    amount,
-    status: "Confirmed",
-  });
+//   // 3. Create the deposit
+//   const deposit = await DepositModel.create({
+//     userId,
+//     hash,
+//     chain,
+//     amount,
+//     status: "Confirmed",
+//   });
 
-  // 4. Update user’s deposit list and operating balance
-  const user = await UserModel.findById(userId);
-  if (!user) {
-    throw new Error("User not found");
-  }
+//   // 4. Update user’s deposit list and operating balance
+//   const user = await UserModel.findById(userId);
+//   if (!user) {
+//     throw new Error("User not found");
+//   }
 
   static async createDeposit(data: { userId: string; hash: string; chain: string; amount: number }) {
     const { userId, hash, chain, amount } = data;
@@ -80,26 +80,26 @@ static async createDeposit(data: {
       coinBalance: user.coinBalance,
     };
   }
-  static async createWithdrawal(userId: Types.ObjectId, amount: number, chain: string, address: string) {
-    const user = await UserModel.findById(userId);
-    if (!user) throw new Error("User not found");
-    if (user.availableBalance < amount) throw new Error("Insufficient balance");
+//   static async createWithdrawal(userId: Types.ObjectId, amount: number, chain: string, address: string) {
+//     const user = await UserModel.findById(userId);
+//     if (!user) throw new Error("User not found");
+//     if (user.availableBalance < amount) throw new Error("Insufficient balance");
 
-    const withdrawal = await WithdrawalModel.create({ userId, amount, chain, address, status: "Pending" });
+//     const withdrawal = await WithdrawalModel.create({ userId, amount, chain, address, status: "Pending" });
 
-  user.deposits.push(deposit._id as Types.ObjectId); // push deposit reference
-  user.operatingBalance += amount; // ✅ only update operating balance
+//   user.deposits.push(deposit._id as Types.ObjectId); // push deposit reference
+//   user.operatingBalance += amount; // ✅ only update operating balance
 
-  await user.save();
+//   await user.save();
 
-  // 5. Return result
-  return {
-    deposit,
-    operatingBalance: user.operatingBalance,
-  };
-}
+//   // 5. Return result
+//   return {
+//     deposit,
+//     operatingBalance: user.operatingBalance,
+//   };
+// }
 
-static async createWithdrawal(userId: Types.ObjectId, amount: number, chain: string) {
+static async createWithdrawal(userId: Types.ObjectId, amount: number, chain: string, address: string) {
   const user = await UserModel.findById(userId);
   if (!user) throw new Error('User not found');
 
@@ -125,9 +125,9 @@ static async createWithdrawal(userId: Types.ObjectId, amount: number, chain: str
   return withdrawal;
 }
 
-    static async getUserTransactions(userId: string,  type?: 'deposit' | 'withdrawal') {
-  let deposits: any[] = [];
-  let withdrawals: any[] = [];
+  //   static async getUserTransactions(userId: string,  type?: 'deposit' | 'withdrawal') {
+  // let deposits: any[] = [];
+  // let withdrawals: any[] = [];
 
   static async getUserTransactions(userId: string, type?: "deposit" | "withdrawal") {
     let deposits: any[] = [];
