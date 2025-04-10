@@ -34,7 +34,9 @@ export class AuthController {
         userName: user.userName,
         coinBalance: user.coinBalance,
         availableBalance: user.availableBalance,
-        operatingBalance: user.operatingBalance,
+        tradingBalance: user.tradingBalance,
+        fundingBalance: user.fundingBalance,
+
       };
       return devResponse(res, { accessToken, refreshToken, userData });
     } catch (error) {
@@ -82,7 +84,7 @@ export class AuthController {
         totalWithdrawals: user.withdrawals.length,
         coinBalance: user.coinBalance,
         availableBalance: user.availableBalance,
-        operatingBalance: user.operatingBalance,
+        tradingBalance: user.tradingBalance,
       };
 
       return devResponse(res, stats);
@@ -152,4 +154,17 @@ static async  inviteUser(req: Request, res: Response) {
     return errorResponse(res, error.message);
   }
 }
+
+  static async transferFunds(req: Request, res: Response) {
+    try {
+      const userId = req.session?.userId;
+      const { from, to, amount } = req.body;
+
+      const result = await TelegramAuthService.transferFunds(userId, from, to, amount);
+      return devResponse(res, result);
+    } catch (error: any) {
+      console.error("Transfer error:", error);
+      return errorResponse(res, error.message || "Transfer failed");
+    }
+  }
 }
