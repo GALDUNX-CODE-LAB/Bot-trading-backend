@@ -9,6 +9,7 @@ const authRoute = Router();
 const webhookPath = `/bot${secret.TELEGRAM_BOT_TOKEN}`;
 
 authRoute.post("/auth/telegram", AuthController.telegramLogin);
+authRoute.post("/auth/admin", AuthController.adminLogin);
 authRoute.get("/check-user/:telegramId", AuthController.checkUserExists);
 authRoute.get("/bot/roi", AuthController.roiInvest);
 authRoute.post(webhookPath, (req: Request, res: Response) => {

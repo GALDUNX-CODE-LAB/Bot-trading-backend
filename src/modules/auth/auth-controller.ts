@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 import { TelegramAuthService } from "./auth-service";
 import JWTService from "../../services/jwt-service";
-import response, { devResponse, errorResponse, notFoundResponse } from "../../utils/response-util";
+import response, { badReqResponse, devResponse, errorResponse, notFoundResponse } from "../../utils/response-util";
 import UserModel from "../../models/user-model";
 import DepositModel from "../../models/deposit-model";
 import WithdrawalModel from "../../models/withdrawal-model";
 import TaskModel from "../../models/task-model";
 import bot from "../../bot/config/bot";
+import secret from "../../config/secret-config";
 
 void DepositModel;
 void WithdrawalModel;
@@ -43,6 +44,23 @@ export class AuthController {
     } catch (error) {
       console.log("Error in authencate controller ", error);
       return errorResponse(res);
+    }
+  }
+
+  static async adminLogin(req: Request, res: Response) {
+    try {
+      const { email, password } = req.body;
+
+      if (password !== secret.ADMIN_PASSWORD || email !== secret.ADMIN_EMAIL)
+        return badReqResponse(res, "Invalid credential");
+
+      const jwtService = new JWTService();
+      const accessToken = jwtService.createAccessToken({ isAdmin: true });
+      const refreshToken = jwtService.createRefreshToken({ isAdmin: true });
+
+      return devResponse(res, { accessToken, refreshToken });
+    } catch (error) {
+      console.log(error);
     }
   }
 
