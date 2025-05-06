@@ -9,5 +9,7 @@ transactionRoute.post("/transactions/deposit", TransactionController.deposit);
 transactionRoute.post("/transactions/withdraw", TransactionController.withdraw);
 transactionRoute.get("/transactions", TransactionController.getUserTransactions);
 transactionRoute.post("/transactions/transfer", TransactionController.transfer);
+transactionRoute.post("/transactions/transfer", TransactionController.transfer);
+transactionRoute.get("/transactions/wallets", TransactionController.userWallet);
 
 export default transactionRoute;

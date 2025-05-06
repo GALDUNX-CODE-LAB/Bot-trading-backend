@@ -8,6 +8,7 @@ import WithdrawalModel from "../../models/withdrawal-model";
 import TaskModel from "../../models/task-model";
 import bot from "../../bot/config/bot";
 import secret from "../../config/secret-config";
+import WalletModel from "../../models/wallet-model";
 
 void DepositModel;
 void WithdrawalModel;
@@ -72,13 +73,14 @@ export class AuthController {
         .select(
           "userName fundingBalance  invites telegramId coinBalance availableBalance operatingBalance deposits withdrawal createdAt updatedAt"
         )
-        .populate("invites");
-
+        .populate("invites")
+        .lean();
       if (!user) {
         return notFoundResponse(res, "User not found");
       }
+      const wallet = await WalletModel.findOne({ userId: user._id }).select("address").lean();
 
-      return response(res, 200, user);
+      return response(res, 200, { ...user, ...wallet });
     } catch (error) {
       console.error("Error fetching user:", error);
       return errorResponse(res, "Failed to fetch user");

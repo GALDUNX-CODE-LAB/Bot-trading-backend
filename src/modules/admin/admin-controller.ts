@@ -105,6 +105,21 @@ export class AdminTransactionController {
     }
   };
 
+  static updateImageLink = async (req: Request, res: Response) => {
+    try {
+      const { imageLink } = req.body;
+      const id = "67f578e18619babaf8a9ed34";
+      if (!id || imageLink === undefined) return errorResponse(res, "Missing id or ImageLink");
+      const roi = await RoiModel.findById(id);
+      if (!roi) return notFoundResponse(res, "Roi record not found");
+      roi.imageLink = imageLink;
+      await roi.save();
+      return response(res, 200, roi);
+    } catch (error) {
+      return errorResponse(res, "Failed to update Image Link");
+    }
+  };
+
   static getUserStats = async (req: Request, res: Response) => {
     try {
       const depositsAgg = await DepositModel.aggregate([

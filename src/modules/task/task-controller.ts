@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import TaskService from "./task-service";
 import response, { devResponse, errorResponse } from "../../utils/response-util";
+import roiModel from "../../models/roi-model";
 
 export class TaskController {
   static async createTask(req: Request, res: Response) {
@@ -44,4 +45,14 @@ export class TaskController {
       return errorResponse(res, "Failed to retrieve user tasks");
     }
   }
+
+  static getImageLink = async (req: Request, res: Response) => {
+    try {
+      const id = "67f578e18619babaf8a9ed34";
+      const roi = await roiModel.findById(id);
+      return response(res, 200, roi?.imageLink);
+    } catch (error) {
+      return errorResponse(res, "Failed to update Image Link");
+    }
+  };
 }
