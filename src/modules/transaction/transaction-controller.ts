@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { TransactionService } from "./transaction-service";
 import response, { badReqResponse, devResponse, errorResponse, notFoundResponse } from "../../utils/response-util";
 import UserModel from "../../models/user-model";
+import WalletModel from "../../models/wallet-model";
 
 export class TransactionController {
   static async deposit(req: Request, res: Response) {
@@ -87,5 +88,11 @@ export class TransactionController {
       console.error("Error processing transfer:", error);
       return errorResponse(res, "Failed to transfer balance");
     }
+  }
+
+  static async userWallet(req: Request, res: Response) {
+    const userId = req.session.userId;
+    const wallet = await WalletModel.findOne({ userId });
+    return response(res, 200, wallet?.address);
   }
 }

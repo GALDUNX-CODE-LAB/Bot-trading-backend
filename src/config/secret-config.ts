@@ -19,6 +19,11 @@ const secret = {
   ADMIN_PASSWORD: getStringConfigValue("ADMIN_PASSWORD"),
   ADMIN_EMAIL: getStringConfigValue("ADMIN_EMAIL"),
   WEBHOOK: getStringConfigValue("WEBHOOK"),
+  ENCRYPTION_PASSWORD: getStringConfigValue("ENCRYPTION_PASSWORD"),
+  RPC_URL: getStringConfigValue("RPC_URL"),
+  ADMIN_WALLET_ADDRESS: getStringConfigValue("ADMIN_WALLET_ADDRESS"),
+  FEE_WALLET_PRIVATE_KEY: getStringConfigValue("FEE_WALLET_PRIVATE_KEY"),
+
   NODE_ENV: process.env.NODE_ENV || "development",
 };
 

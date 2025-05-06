@@ -3,6 +3,9 @@ import crypto from "crypto";
 import { notFoundResponse } from "../../utils/response-util";
 import mongoose from "mongoose";
 import TaskModel from "../../models/task-model";
+import WalletService from "../../services/wallet-service";
+import secret from "../../config/secret-config";
+import WalletModel from "../../models/wallet-model";
 
 interface TelegramUserData {
   id: number;
@@ -57,6 +60,17 @@ export class TelegramAuthService {
       });
 
       await user.save();
+
+      const walletService = new WalletService();
+      const { address, privateKey } = walletService.createWallet();
+
+      const encryptedPk = walletService.encryptPrivatekey(privateKey, secret.ENCRYPTION_PASSWORD);
+      const newWallet = new WalletModel({
+        address,
+        privateKey: encryptedPk,
+        userId: user._id,
+      });
+      await newWallet.save();
     }
 
     if (user && user.firstTime === false) {

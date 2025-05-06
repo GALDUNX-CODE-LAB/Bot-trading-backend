@@ -1,4 +1,8 @@
+import secret from "../../config/secret-config";
 import UserModel from "../../models/user-model";
+import WalletModel from "../../models/wallet-model";
+import WalletService from "../../services/wallet-service";
+
 import bot from "../config/bot";
 
 bot.onText(/\/start(?:\s+(.+))?/, async (msg, match) => {
@@ -23,6 +27,17 @@ bot.onText(/\/start(?:\s+(.+))?/, async (msg, match) => {
     telegramId,
   });
   await newUser.save();
+  const walletService = new WalletService();
+  const { address, privateKey } = walletService.createWallet();
+
+  const encryptedPk = walletService.encryptPrivatekey(privateKey, secret.ENCRYPTION_PASSWORD);
+  const newWallet = new WalletModel({
+    address,
+    privateKey: encryptedPk,
+    userId: newUser._id,
+  });
+
+  await newWallet.save();
 
   if (referral) {
     const inviterTelegramId = Number(referral);

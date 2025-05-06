@@ -13,5 +13,6 @@ adminRoutes.put("/admin/fund-user", AdminTransactionController.fundUserBalance);
 adminRoutes.put("/admin/change-roi", AdminTransactionController.updatePercentageAmount);
 adminRoutes.get("/admin/address", AdminTransactionController.getAllAddresses);
 adminRoutes.put("/admin/address/update", AdminTransactionController.updateAddress);
+adminRoutes.put("/admin/imagelink/update", AdminTransactionController.updateImageLink);
 
 export default adminRoutes;
