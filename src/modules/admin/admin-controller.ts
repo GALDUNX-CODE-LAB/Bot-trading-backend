@@ -151,12 +151,16 @@ export class AdminTransactionController {
 
   static fundUserBalance = async (req: Request, res: Response) => {
     try {
-      const { telegramId, amount } = req.body;
+      const { telegramId, amount, balanceType } = req.body;
       if (!telegramId || amount === undefined) return badReqResponse(res, "Missing telegramId or amount");
       if (typeof amount !== "number" || amount <= 0) return badReqResponse(res, "Invalid amount");
       const user = await UserModel.findOne({ telegramId });
       if (!user) return notFoundResponse(res, "User not found");
-      await UserModel.findOneAndUpdate({ telegramId }, { availableBalance: user.availableBalance + Number(amount) });
+      if (balanceType === "availableBalance") {
+        await UserModel.findOneAndUpdate({ telegramId }, { availableBalance: user.availableBalance + Number(amount) });
+      } else {
+        await UserModel.findOneAndUpdate({ telegramId }, { operatingBalance: user.operatingBalance + Number(amount) });
+      }
       await user.save();
       return response(res, 200, user);
     } catch (error) {
