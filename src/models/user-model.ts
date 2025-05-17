@@ -15,6 +15,7 @@ export interface IUser extends Document {
   invites: Types.ObjectId[];
   upline: Types.ObjectId;
   firstTime: boolean;
+  botActive: boolean;
   lastMiningClaim?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -42,6 +43,11 @@ const UserSchema = new Schema<IUser>(
     },
 
     firstTime: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
+    botActive: {
       type: Boolean,
       required: true,
       default: false,

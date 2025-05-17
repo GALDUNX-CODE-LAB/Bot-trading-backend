@@ -74,6 +74,13 @@ export class TransactionController {
       // @ts-ignore
       user[to] += amount;
 
+      console.log({ from, to });
+
+      if (from === "fundingBalance" && to === "operatingBalance") {
+        user.botActive = true;
+        await user.save(); // ← make sure you await this!
+      }
+
       await user.save();
 
       return devResponse(res, {

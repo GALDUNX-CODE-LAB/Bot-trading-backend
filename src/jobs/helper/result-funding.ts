@@ -9,6 +9,7 @@ export const fundUsersWithRoi = async () => {
 
     await Promise.all(
       users.map(async (user) => {
+        if (!user.botActive) return;
         const id = "67f578e18619babaf8a9ed34";
         const roi = await roiModel.findById(id);
         const percentage = roi?.percentageAmount ? roi.percentageAmount / 100 : 0.02;
