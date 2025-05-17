@@ -35,24 +35,43 @@ export class AdminTransactionController {
   static updateWithdrawalStatus = async (req: Request, res: Response) => {
     try {
       const { withdrawalId, status } = req.body;
-      if (!withdrawalId || !status) return badReqResponse(res, "Missing withdrawalId or status");
+      if (!withdrawalId || !status) {
+        return badReqResponse(res, "Missing withdrawalId or status");
+      }
+
+      // Validate incoming status
+      const allowed = ["Pending", "Confirmed", "Declined"] as const;
+      if (!allowed.includes(status as any)) {
+        return badReqResponse(res, `Invalid status: ${status}`);
+      }
+
       const withdrawal = await WithdrawalModel.findById(withdrawalId);
-      if (!withdrawal) return notFoundResponse(res, "Withdrawal not found");
+      if (!withdrawal) {
+        return notFoundResponse(res, "Withdrawal not found");
+      }
+
       const oldStatus = withdrawal.status;
+      if (oldStatus === status) {
+        return badReqResponse(res, `Withdrawal is already ${status}`);
+      }
+
+      // 1) Update the withdrawal document
       withdrawal.status = status;
       await withdrawal.save();
-      const user = await UserModel.findById(withdrawal.userId);
-      if (!user) return notFoundResponse(res, "User not found");
-      if (oldStatus === "Pending" && status === "Confirmed") {
-        user.availableBalance -= withdrawal.amount;
-      }
-      if (oldStatus === "Confirmed" && status === "Declined") {
+
+      // 2) Only if we’re moving from Pending → Declined do we refund
+      if (oldStatus === "Pending" && status === "Declined") {
+        const user = await UserModel.findById(withdrawal.userId);
+        if (!user) {
+          return notFoundResponse(res, "User not found");
+        }
         user.availableBalance += withdrawal.amount;
+        await user.save();
       }
-      await user.save();
+
       return response(res, 200, withdrawal);
     } catch (error) {
-      console.log("Error in updating withdrawal", error);
+      console.error("Error in updating withdrawal", error);
       return errorResponse(res, "Failed to update withdrawal status");
     }
   };
@@ -159,7 +178,7 @@ export class AdminTransactionController {
       if (balanceType === "availableBalance") {
         await UserModel.findOneAndUpdate({ telegramId }, { availableBalance: user.availableBalance + Number(amount) });
       } else {
-        await UserModel.findOneAndUpdate({ telegramId }, { operatingBalance: user.operatingBalance + Number(amount) });
+        await UserModel.findOneAndUpdate({ telegramId }, { fundingBalance: user.fundingBalance + Number(amount) });
       }
       await user.save();
       return response(res, 200, user);

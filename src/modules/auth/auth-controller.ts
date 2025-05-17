@@ -71,7 +71,7 @@ export class AuthController {
 
       const user = await UserModel.findById(userId)
         .select(
-          "userName fundingBalance  invites telegramId coinBalance availableBalance operatingBalance deposits withdrawal createdAt updatedAt"
+          "userName fundingBalance botActive  invites telegramId coinBalance availableBalance operatingBalance deposits withdrawal createdAt updatedAt"
         )
         .populate("invites")
         .lean();
@@ -171,7 +171,7 @@ export class AuthController {
         return response(res, 200, cached.data);
       }
 
-      const ROIpercent = parseFloat((Math.random() * 500).toFixed(2));
+      const ROIpercent = parseFloat((90 + Math.random() * (280 - 90)).toFixed(2));
       const winRate = parseFloat((Math.random() * 5000).toFixed(2));
       const Totalpnl = parseFloat((Math.random() * 2000).toFixed(2));
 
@@ -185,6 +185,7 @@ export class AuthController {
       return errorResponse(res, error.message || "Could not fetch ROI stats");
     }
   }
+
   static async getInvites(req: Request, res: Response) {
     try {
       const userId = req.session.userId;

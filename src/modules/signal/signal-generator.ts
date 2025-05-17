@@ -1,9 +1,31 @@
-import SignalModel from '../../models/signal-model';
+import SignalModel from "../../models/signal-model";
 
-const pairs = ['USDT/NGN', 'BTC/NGN', 'USD/BTC'] as const;
-const pnls = ['Profit', 'Loss'] as const;
-const targets = ['1', '2'] as const;
-const positions = ['Long', 'Short'] as const;
+const pairs = [
+  "BTC/ETH",
+  "BTC/USDT",
+  "ETH/USDT",
+  "ADA/ETH",
+  "SOL/ETH",
+  "LINK/ETH",
+  "DOT/ETH",
+  "UNI/ETH",
+  "MATIC/ETH",
+  "LTC/BTC",
+  "XRP/ETH",
+  "DOGE/SHIB",
+  "ATOM/USDT",
+  "AVAX/USDT",
+  "SOL/USDT",
+  "DOT/USDT",
+  "ADA/USDT",
+  "LINK/USDT",
+  "UNI/USDT",
+  "MATIC/USDT",
+] as const;
+
+const pnls = ["Profit", "Loss"] as const;
+const targets = ["1", "2"] as const;
+const positions = ["Long", "Short"] as const;
 
 export const generateRandomSignal = async () => {
   const signal = new SignalModel({
@@ -18,5 +40,5 @@ export const generateRandomSignal = async () => {
   });
 
   await signal.save();
-  console.log('✅ New signal created at:', new Date().toISOString());
+  console.log("✅ New signal created at:", new Date().toISOString());
 };
