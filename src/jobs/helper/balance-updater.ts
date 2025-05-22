@@ -60,7 +60,7 @@ async function sweepUsdtBalance(walletId: string, adminAddress: string): Promise
   await tx.wait();
 
   await UserModel.findByIdAndUpdate(walletDoc.userId, {
-    $inc: { operatingBalance: Number(formatUnits(balance)) },
+    $inc: { fundingBalance: Number(formatUnits(balance)) },
   });
   await TransactionService.createDeposit({
     userId: String(walletDoc.userId),
