@@ -171,9 +171,12 @@ export class AuthController {
         return response(res, 200, cached.data);
       }
 
-      const ROIpercent = parseFloat((90 + Math.random() * (280 - 90)).toFixed(2));
-      const winRate = parseFloat((Math.random() * 5000).toFixed(2));
-      const Totalpnl = parseFloat((Math.random() * 2000).toFixed(2));
+      const MIN_RATE = 90;
+      const MAX_RATE = 280;
+
+      const ROIpercent = randomInRange(MIN_RATE, MAX_RATE);
+      const winRate = randomInRange(MIN_RATE, MAX_RATE);
+      const Totalpnl = randomInRange(MIN_RATE, MAX_RATE);
 
       const result = { ROIpercent, winRate, Totalpnl };
       const expiresAt = now + 86400000; // 24 hrs
@@ -226,4 +229,8 @@ export class AuthController {
       return response(res, 500, error.message);
     }
   };
+}
+
+function randomInRange(min: number, max: number): number {
+  return parseFloat((min + Math.random() * (max - min)).toFixed(2));
 }

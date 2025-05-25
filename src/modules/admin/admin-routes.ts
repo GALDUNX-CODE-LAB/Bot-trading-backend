@@ -14,5 +14,6 @@ adminRoutes.put("/admin/change-roi", AdminTransactionController.updatePercentage
 adminRoutes.get("/admin/address", AdminTransactionController.getAllAddresses);
 adminRoutes.put("/admin/address/update", AdminTransactionController.updateAddress);
 adminRoutes.put("/admin/imagelink/update", AdminTransactionController.updateImageLink);
+adminRoutes.post("/admin/user/result", AdminTransactionController.createResult);
 
 export default adminRoutes;

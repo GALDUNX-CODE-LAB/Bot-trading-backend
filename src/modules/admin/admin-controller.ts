@@ -5,6 +5,10 @@ import UserModel from "../../models/user-model";
 import response, { badReqResponse, errorResponse, notFoundResponse } from "../../utils/response-util";
 import RoiModel from "../../models/roi-model";
 import AddressModel, { IAddress } from "../../models/address-model";
+import { TransactionService } from "../transaction/transaction-service";
+import { Types } from "mongoose";
+import resultModel from "../../models/result-model";
+import { generateAICode } from "../../jobs/helper/result-funding";
 
 export class AdminTransactionController {
   static updateDepositStatus = async (req: Request, res: Response) => {
@@ -181,6 +185,12 @@ export class AdminTransactionController {
         await UserModel.findOneAndUpdate({ telegramId }, { fundingBalance: user.fundingBalance + Number(amount) });
       }
       await user.save();
+      await TransactionService.createDeposit({
+        userId: String(user._id),
+        hash: String(new Types.ObjectId()),
+        chain: "BSC",
+        amount: Number(amount),
+      });
       return response(res, 200, user);
     } catch (error) {
       return errorResponse(res, "Failed to fund user balance");
@@ -223,6 +233,28 @@ export class AdminTransactionController {
     } catch (error) {
       console.log(error);
       return errorResponse(res, "Failed to update address");
+    }
+  };
+
+  static createResult = async (req: Request, res: Response) => {
+    try {
+      const { telegramId, amount } = req.body;
+
+      if (!telegramId || !amount) return badReqResponse(res, "Missing telegramId or amount");
+
+      const user = await UserModel.findOne({ telegramId });
+      if (!user) return notFoundResponse(res, "User not found");
+      await resultModel.create({
+        userId: user._id,
+        taskId: generateAICode(),
+        date: new Date(),
+        amount,
+        roiPercentage: Number((Math.random() * 10).toFixed(2)),
+      });
+      return response(res, 201, "New result created successfully");
+    } catch (error) {
+      console.log(error);
+      return errorResponse(res, "Failed to create result");
     }
   };
 }
