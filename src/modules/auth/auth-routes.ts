@@ -4,6 +4,7 @@ import { AuthController } from "./auth-controller";
 import authHandler from "../../middleware/auth-handler";
 import secret from "../../config/secret-config";
 import bot from "../../bot/config/bot";
+import { TaskController } from "../task/task-controller";
 
 const authRoute = Router();
 const webhookPath = `/bot${secret.TELEGRAM_BOT_TOKEN}`;
@@ -12,6 +13,8 @@ authRoute.post("/auth/telegram", AuthController.telegramLogin);
 authRoute.post("/auth/admin", AuthController.adminLogin);
 authRoute.get("/check-user/:telegramId", AuthController.checkUserExists);
 authRoute.get("/bot/roi", AuthController.roiInvest);
+authRoute.post("/tasks/new", TaskController.createTask);
+
 authRoute.post(webhookPath, (req: Request, res: Response) => {
   bot.processUpdate(req.body);
   res.sendStatus(200);
