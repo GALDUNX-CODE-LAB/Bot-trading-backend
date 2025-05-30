@@ -50,8 +50,8 @@ const start = async () => {
 
 // test auto deploy -- v5
 // Run every 24 hours (at midnight)
-cron.schedule("0 0 * * *", async () => {
-  console.log("⏰ Generating daily signal...");
+cron.schedule("0 */6 * * *", async () => {
+  console.log("⏰ Generating signal every 6 hours...");
   await generateRandomSignal();
 });
 
