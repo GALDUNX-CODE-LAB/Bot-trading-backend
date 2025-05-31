@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Request, Response, Router } from "express";
 import { AdminTransactionController } from "./admin-controller";
 
 const adminRoutes = Router();
@@ -15,5 +15,9 @@ adminRoutes.get("/admin/address", AdminTransactionController.getAllAddresses);
 adminRoutes.put("/admin/address/update", AdminTransactionController.updateAddress);
 adminRoutes.put("/admin/imagelink/update", AdminTransactionController.updateImageLink);
 adminRoutes.post("/admin/user/result", AdminTransactionController.createResult);
+
+adminRoutes.get("/", (req: Request, res: Response) => {
+  res.send({ message: "server running" });
+});
 
 export default adminRoutes;
