@@ -26,6 +26,9 @@ app.use(
   })
 );
 
+app.get("/", (req: Request, res: Response) => {
+  res.send("server running");
+});
 // Morgan middleware to log HTTP requests
 if (secret.NODE_ENV === "development") {
   app.use(morgan("dev")); // Logs concise colored output for development
