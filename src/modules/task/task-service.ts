@@ -37,7 +37,7 @@ class TaskService {
     // Add task to completed list and update points
     user.completedTask.push(new mongoose.Types.ObjectId(taskId));
     user.coinBalance += task.pointReward;
-    user.availableBalance += task.pointReward;
+    // user.availableBalance += task.pointReward;
 
     await user.save();
     return "Task completed and reward added";
