@@ -9,6 +9,7 @@ export interface IUser extends Document {
   availableBalance: number;
   operatingBalance: number;
   fundingBalance: number;
+  evhRewardBalance: number;
   deposits: Types.ObjectId[];
   withdrawals: Types.ObjectId[];
   completedTask: Types.ObjectId[];
@@ -57,6 +58,10 @@ const UserSchema = new Schema<IUser>(
       default: 0,
     },
     fundingBalance: {
+      type: Number,
+      default: 0,
+    },
+    evhRewardBalance: {
       type: Number,
       default: 0,
     },
