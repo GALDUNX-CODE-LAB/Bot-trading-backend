@@ -71,7 +71,7 @@ export class AuthController {
 
       const user = await UserModel.findById(userId)
         .select(
-          "userName fundingBalance botActive  invites telegramId coinBalance availableBalance operatingBalance deposits withdrawal createdAt updatedAt"
+          "userName fundingBalance botActive  invites telegramId coinBalance availableBalance operatingBalance evhRewardBalance deposits withdrawal createdAt updatedAt"
         )
         .populate("invites")
         .lean();
